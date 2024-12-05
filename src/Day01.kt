@@ -1,18 +1,31 @@
+import utils.println
+import utils.readInput
+import kotlin.math.absoluteValue
+
 fun main() {
     fun part1(input: List<String>): Int {
-        return input.size
+        val parts = input.map { it.split(",") }
+        val first = parts.map { it.first() }.map { it.toInt() }.sorted()
+        val second = parts.map { it.last() }.map { it.toInt() }.sorted()
+        return first.zip(second).sumOf { (a, b) -> (a - b).absoluteValue }
     }
 
     fun part2(input: List<String>): Int {
-        return input.size
+        val parts = input.map { it.split(",") }
+        val first = parts.map { it.first() }.map { it.toInt() }
+        val second = parts.map { it.last() }.map { it.toInt() }
+
+        val scoreMap = mutableMapOf<Int, Int>()
+        var score = 0
+        first.forEach{ num ->
+            score += num * scoreMap.computeIfAbsent(num) {second.count { it == num }}
+        }
+        return score
     }
 
-    // Test if implementation meets criteria from the description, like:
-    check(part1(listOf("test_input")) == 1)
-
-    // Or read a large test input from the `src/Day01_test.txt` file:
     val testInput = readInput("Day01_test")
-    check(part1(testInput) == 1)
+    check(part1(testInput) == 11)
+    check(part2(testInput) == 31)
 
     // Read the input from the `src/Day01.txt` file.
     val input = readInput("Day01")
