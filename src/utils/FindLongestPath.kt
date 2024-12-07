@@ -1,4 +1,4 @@
-package com.itzbubschki.aoc2023.utils
+package utils
 
 import java.util.*
 

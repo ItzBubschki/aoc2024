@@ -1,4 +1,4 @@
-package com.itzbubschki.aoc2023.utils
+package utils
 
 import kotlin.math.abs
 
@@ -6,6 +6,10 @@ typealias Point = Pair<Int, Int>
 
 operator fun Point.plus(other: Point): Point {
     return Pair(this.first + other.first, this.second + other.second)
+}
+
+operator fun Point.minus(other: Point): Point {
+    return Pair(this.first - other.first, this.second - other.second)
 }
 
 operator fun Point.rem(bounds: Point): Point {
@@ -38,6 +42,12 @@ fun Point.addWithWrap(other: Point, size: Pair<Int, Int>): Point {
 fun Point.neighbours(): List<Point> {
     return Direction.entries.map {
         DirectionToPositionMap.getNotNull(it) + this
+    }
+}
+
+fun Point.getTouchingPoints(): List<Point> {
+    return TouchingDirection.entries.map {
+        TouchingDirectionToPositionMap.getNotNull(it) + this
     }
 }
 

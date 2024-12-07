@@ -1,5 +1,8 @@
 package com.itzbubschki.aoc2023.utils
 
+import utils.Direction
+import utils.Point
+
 enum class ORIENTATION {
     NORMAL,
     FLIPPED

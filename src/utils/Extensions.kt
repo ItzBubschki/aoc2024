@@ -1,4 +1,4 @@
-package com.itzbubschki.aoc2023.utils
+package utils
 
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -6,16 +6,6 @@ import kotlin.math.absoluteValue
 
 
 infix fun IntRange.intersects(other: IntRange): Boolean = first <= other.last && last >= other.first
-
-/**
- * Converts string to md5 hash.
- */
-fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteArray())).toString(16).padStart(32, '0')
-
-/**
- * The cleaner shorthand for printing output.
- */
-fun Any?.println() = println(this)
 
 tailrec fun Long.gcd(other: Long): Long {
     return if (this == 0L || other == 0L) {

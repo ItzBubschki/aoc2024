@@ -1,4 +1,4 @@
-package com.itzbubschki.aoc2023.utils
+package utils
 
 val DirectionToPositionMap = mapOf(
     Direction.NORTH to (0 to -1),
