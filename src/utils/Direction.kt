@@ -39,6 +39,13 @@ enum class Direction(val char: Char, val sign: Char) {
     val pointPositiveUp: Point
         get() = DirectionPointMapping.upPositive[this]
 
+    fun rightTurn() = when(this) {
+        EAST -> SOUTH
+        SOUTH -> WEST
+        WEST -> NORTH
+        NORTH -> EAST
+    }
+
     companion object {
         private val map = entries.associateBy(Direction::char)
 

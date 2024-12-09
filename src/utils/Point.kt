@@ -8,8 +8,17 @@ operator fun Point.plus(other: Point): Point {
     return Pair(this.first + other.first, this.second + other.second)
 }
 
+operator fun Point.plus(other: Direction): Point {
+    val direction = DirectionToPositionMap.getNotNull(other)
+    return this + direction
+}
+
 operator fun Point.minus(other: Point): Point {
     return Pair(this.first - other.first, this.second - other.second)
+}
+
+operator fun Point.times(times: Int): Point {
+    return Pair(this.first*times, this.second*times)
 }
 
 operator fun Point.rem(bounds: Point): Point {

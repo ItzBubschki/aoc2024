@@ -1,7 +1,5 @@
 package utils
 
-import java.math.BigInteger
-import java.security.MessageDigest
 import kotlin.math.absoluteValue
 
 
@@ -60,3 +58,15 @@ fun <T> List<String>.inputToClass(transform: (Int, Int, Char) -> T): List<List<T
 fun Iterable<Int>.product(): Int = reduce(Int::times)
 
 fun Iterable<Long>.product(): Long = reduce(Long::times)
+
+fun List<CharArray>.findPointForChar(char: Char): Point {
+    val y = this.indexOfFirst { it.contains(char) }
+    val x = this[y].indexOf(char)
+    return Point(x, y)
+}
+
+operator fun List<CharArray>.get(at: Point): Char? = getOrNull(at.second)?.getOrNull(at.first)
+
+operator fun List<CharArray>.set(at: Point, c: Char) {
+    this[at.second][at.first] = c
+}
