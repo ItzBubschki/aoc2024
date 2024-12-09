@@ -1,7 +1,6 @@
-package com.itzbubschki.aoc2023.utils
+@file:Suppress("unused")
 
-import utils.Direction
-import utils.Point
+package utils
 
 enum class ORIENTATION {
     NORMAL,
