@@ -72,3 +72,15 @@ operator fun List<CharArray>.get(at: Point): Char? = getOrNull(at.second)?.getOr
 operator fun List<CharArray>.set(at: Point, c: Char) {
     this[at.second][at.first] = c
 }
+
+fun String.repeat(times: Int): String {
+    return buildString {
+        repeat(times) {
+            append(this@repeat)
+        }
+    }
+}
+
+fun <T> MutableList<T>.swap(i: Int, j: Int) {
+    this[i] = this[j].also { this[j] = this[i] }
+}
