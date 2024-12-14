@@ -45,6 +45,10 @@ fun Point.calculateDistance(other: Point): Int {
     return abs(this.first - other.first) + abs(this.second - other.second)
 }
 
+fun Point.mirror(mirror: Point): Point {
+    return mirror + (mirror - this)
+}
+
 fun Point.addWithWrap(other: Point, size: Pair<Int, Int>): Point {
     val unwrapped = this + other
     return Math.floorMod(unwrapped.first, size.first) to Math.floorMod(unwrapped.second, size.second)
