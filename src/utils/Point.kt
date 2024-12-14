@@ -60,6 +60,12 @@ fun Point.neighbours(): List<Point> {
     }
 }
 
+fun Point.existingNeighbours(input: List<List<Any>>): List<Point> {
+    return Direction.entries.map {
+        DirectionToPositionMap.getNotNull(it) + this
+    }.filter { it.second in input.indices && it.first in input.first().indices }
+}
+
 fun Point.getTouchingPoints(): List<Point> {
     return TouchingDirection.entries.map {
         TouchingDirectionToPositionMap.getNotNull(it) + this
