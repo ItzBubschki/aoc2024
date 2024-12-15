@@ -84,3 +84,14 @@ fun String.repeat(times: Int): String {
 fun <T> MutableList<T>.swap(i: Int, j: Int) {
     this[i] = this[j].also { this[j] = this[i] }
 }
+
+fun Long.hasEvenDigits(): Boolean =
+    toString().length % 2 == 0
+
+fun Long.split(): List<Long> {
+    val s = toString()
+    return listOf(
+        s.substring(0, s.length / 2).toLong(),
+        s.substring(s.length / 2, s.length).toLong()
+    )
+}
