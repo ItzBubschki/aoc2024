@@ -36,3 +36,9 @@ fun <T> PointWithData<T>.calculateDistance(other: PointWithData<T>): Int {
 fun <T> PointWithData<T>.point(): Point {
     return Point(x, y)
 }
+
+fun <T> PointWithData<T>.neighbours(input: List<List<PointWithData<T>>>, defaultData: T): List<PointWithData<T>> {
+    return Direction.entries.map {
+        DirectionToPositionMap.getNotNull(it) + point()
+    }.map { input.get2dOptional(it) ?: PointWithData(it.first, it.second, defaultData) }
+}

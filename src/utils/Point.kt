@@ -20,7 +20,7 @@ operator fun Point.minus(other: Point): Point {
 }
 
 operator fun Point.times(times: Int): Point {
-    return Pair(this.first*times, this.second*times)
+    return Pair(this.first * times, this.second * times)
 }
 
 operator fun Point.rem(bounds: Point): Point {
@@ -74,3 +74,18 @@ fun Point.getTouchingPoints(): List<Point> {
 
 operator fun <E> Collection<Collection<E>>.contains(point: Point): Boolean =
     this.isNotEmpty() && point.second in this.indices && point.first in this.first().indices
+
+fun <T>Point.countCorners(garden: List<List<T>>): Int =
+    listOf(Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH)
+        .zipWithNext()
+        .map { (first, second) ->
+            listOf(
+                garden.get2dOptional(this),
+                garden.get2dOptional(this + first),
+                garden.get2dOptional(this + second),
+                garden.get2dOptional(this + first + second)
+            )
+        }.count { (target, side1, side2, corner) ->
+            (target != side1 && target != side2) ||
+                    (side1 == target && side2 == target && corner != target)
+        }
