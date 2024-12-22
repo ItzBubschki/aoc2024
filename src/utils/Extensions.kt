@@ -95,3 +95,5 @@ fun Long.split(): List<Long> {
         s.substring(s.length / 2, s.length).toLong()
     )
 }
+
+fun List<String>.splitInput() = joinToString("\n").split("\n\n")

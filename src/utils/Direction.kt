@@ -48,11 +48,21 @@ enum class Direction(val char: Char, val sign: Char) {
         NORTH -> EAST
     }
 
+    fun isHorizontal() = when(this) {
+        EAST, WEST -> true
+        SOUTH, NORTH -> false
+    }
+
     companion object {
         private val map = entries.associateBy(Direction::char)
+        private val signMap = entries.associateBy(Direction::sign)
 
         fun fromChar(char: Char): Direction {
             return map[char] ?: throw IllegalArgumentException("Unknown direction char: $char")
+        }
+
+        fun fromSign(sign: Char): Direction {
+            return signMap[sign] ?: throw IllegalArgumentException("Unknown direction sign: $sign")
         }
     }
 }

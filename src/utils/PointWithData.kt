@@ -4,7 +4,7 @@ package utils
 
 import kotlin.math.abs
 
-data class PointWithData<T>(val x: Int, val y: Int, val data: T)
+data class PointWithData<T>(val x: Int, val y: Int, var data: T)
 
 operator fun <T> PointWithData<T>.plus(other: Point): PointWithData<T> {
     return PointWithData(this.x + other.first, this.x + other.second, data)
@@ -41,4 +41,8 @@ fun <T> PointWithData<T>.neighbours(input: List<List<PointWithData<T>>>, default
     return Direction.entries.map {
         DirectionToPositionMap.getNotNull(it) + point()
     }.map { input.get2dOptional(it) ?: PointWithData(it.first, it.second, defaultData) }
+}
+
+fun <T> PointWithData<T>.swap(other: PointWithData<T>) {
+    data = other.data.also { other.data = data }
 }
