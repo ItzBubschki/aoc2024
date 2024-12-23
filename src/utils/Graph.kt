@@ -5,6 +5,7 @@ package utils
 import java.util.*
 
 typealias NeighbourFunction<K> = (K) -> Iterable<K>
+typealias NeighbourFunctionDifferentReturn<K, T> = (K) -> Iterable<T>
 typealias CostFunction<K> = (K, K) -> Int
 typealias HeuristicFunction<K> = (K) -> Int
 class GraphSearchResult<K>(val start: K, val end: K?, private val result: Map<K, SeenVertex<K>>) {
@@ -57,6 +58,42 @@ fun <K> findShortestPathByPredicate(
     }
 
     return GraphSearchResult(start, endVertex, seenPoints)
+}
+
+fun <T> findShortestPathByPredicateWithDirections(
+    start: Pair<PointWithData<T>, Direction>,
+    endFunction: (PointWithData<T>) -> Boolean,
+    neighbours: NeighbourFunctionDifferentReturn<Pair<PointWithData<T>, Direction>, PointWithData<T>>,
+    cost: CostFunction<Pair<PointWithData<T>, Direction>> = { _, _ -> 1 },
+    heuristic: HeuristicFunction<Pair<PointWithData<T>, Direction>> = { 0 }
+): GraphSearchResult<PointWithData<T>> {
+    val toVisit = PriorityQueue(listOf(ScoredVertex(start.first, 0, heuristic(start))))
+    var endVertex: PointWithData<T>? = null
+    val seenPoints: MutableMap<PointWithData<T>, SeenVertex<PointWithData<T>>> = mutableMapOf(start.first to SeenVertex(0, null))
+    val directionMap: MutableMap<PointWithData<T>, Direction> = mutableMapOf(start.first to start.second)
+
+    while (endVertex == null) {
+        if (toVisit.isEmpty()) {
+            return GraphSearchResult(start.first, null, seenPoints)
+        }
+
+        val (currentVertex, currentScore) = toVisit.remove()
+        val currentDirection = directionMap[currentVertex] ?: start.second
+        endVertex = if (endFunction(currentVertex)) currentVertex else null
+
+        val nextPoints = neighbours(currentVertex to currentDirection)
+            .filter { it !in seenPoints }
+            .map { next ->
+                val nextDirection = Direction.fromPoints(currentVertex.point(), next.point())
+                directionMap[next] = nextDirection
+                ScoredVertex(next, currentScore + cost(currentVertex to currentDirection, next to nextDirection), heuristic(next to nextDirection))
+            }
+
+        toVisit.addAll(nextPoints)
+        seenPoints.putAll(nextPoints.associate { it.vertex to SeenVertex(it.score, currentVertex) })
+    }
+
+    return GraphSearchResult(start.first, endVertex, seenPoints)
 }
 
 data class SeenVertex<K>(val cost: Int, val prev: K?)

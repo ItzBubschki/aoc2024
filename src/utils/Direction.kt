@@ -64,6 +64,16 @@ enum class Direction(val char: Char, val sign: Char) {
         fun fromSign(sign: Char): Direction {
             return signMap[sign] ?: throw IllegalArgumentException("Unknown direction sign: $sign")
         }
+
+        fun fromPoints(start: Point, end: Point): Direction {
+            return when {
+                start.first < end.first -> EAST
+                start.first > end.first -> WEST
+                start.second < end.second -> SOUTH
+                start.second > end.second -> NORTH
+                else -> throw IllegalArgumentException("Points are the same: $start")
+            }
+        }
     }
 }
 
