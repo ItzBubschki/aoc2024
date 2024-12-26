@@ -43,6 +43,12 @@ fun <T> PointWithData<T>.neighbours(input: List<List<PointWithData<T>>>, default
     }.map { input.get2dOptional(it) ?: PointWithData(it.first, it.second, defaultData) }
 }
 
+fun <T> PointWithData<T>.neighbours(input: List<List<PointWithData<T>>>): List<PointWithData<T>> {
+    return Direction.entries.map {
+        DirectionToPositionMap.getNotNull(it) + point()
+    }.mapNotNull { input.get2dOptional(it) }
+}
+
 fun <T> PointWithData<T>.swap(other: PointWithData<T>) {
     data = other.data.also { other.data = data }
 }

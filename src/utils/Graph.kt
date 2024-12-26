@@ -8,6 +8,7 @@ typealias NeighbourFunction<K> = (K) -> Iterable<K>
 typealias NeighbourFunctionDifferentReturn<K, T> = (K) -> Iterable<T>
 typealias CostFunction<K> = (K, K) -> Int
 typealias HeuristicFunction<K> = (K) -> Int
+
 class GraphSearchResult<K>(val start: K, val end: K?, private val result: Map<K, SeenVertex<K>>) {
     fun getScore(vertex: K) = result[vertex]?.cost ?: throw IllegalStateException("Result for $vertex not available")
     fun getScore() = end?.let { getScore(it) } ?: throw IllegalStateException("No path found")
@@ -69,7 +70,8 @@ fun <T> findShortestPathByPredicateWithDirections(
 ): GraphSearchResult<PointWithData<T>> {
     val toVisit = PriorityQueue(listOf(ScoredVertex(start.first, 0, heuristic(start))))
     var endVertex: PointWithData<T>? = null
-    val seenPoints: MutableMap<PointWithData<T>, SeenVertex<PointWithData<T>>> = mutableMapOf(start.first to SeenVertex(0, null))
+    val seenPoints: MutableMap<PointWithData<T>, SeenVertex<PointWithData<T>>> =
+        mutableMapOf(start.first to SeenVertex(0, null))
     val directionMap: MutableMap<PointWithData<T>, Direction> = mutableMapOf(start.first to start.second)
 
     while (endVertex == null) {
@@ -86,7 +88,11 @@ fun <T> findShortestPathByPredicateWithDirections(
             .map { next ->
                 val nextDirection = Direction.fromPoints(currentVertex.point(), next.point())
                 directionMap[next] = nextDirection
-                ScoredVertex(next, currentScore + cost(currentVertex to currentDirection, next to nextDirection), heuristic(next to nextDirection))
+                ScoredVertex(
+                    next,
+                    currentScore + cost(currentVertex to currentDirection, next to nextDirection),
+                    heuristic(next to nextDirection)
+                )
             }
 
         toVisit.addAll(nextPoints)
@@ -94,6 +100,54 @@ fun <T> findShortestPathByPredicateWithDirections(
     }
 
     return GraphSearchResult(start.first, endVertex, seenPoints)
+}
+
+fun <K> findAllShortestPathsByPredicate(
+    start: K,
+    endFunction: (K) -> Boolean,
+    neighbours: NeighbourFunction<K>,
+): List<GraphSearchResult<K>> {
+    val queue = PriorityQueue<Pair<List<K>, Int>>(compareBy { it.second })
+        .apply { add(listOf(start) to 0) }
+    val seen = mutableMapOf<K, Int>()
+    var costAtGoal: Int? = null
+    val allPaths: MutableList<Map<K, SeenVertex<K>>> = mutableListOf()
+
+    while (queue.isNotEmpty()) {
+        val (path, cost) = queue.poll()
+        val location = path.last()
+
+        if (costAtGoal != null && cost > costAtGoal) {
+            return allPaths.map { GraphSearchResult(start, it.keys.first(), it) }
+        } else if (endFunction(location)) {
+            costAtGoal = cost
+            val parsedPath = path.reversed().zipWithNext()
+                .associate { (target, from) -> target to SeenVertex(seen[target] ?: cost, from) }.toMutableMap()
+            parsedPath[path.first()] = SeenVertex(0, null)
+            allPaths.add(parsedPath)
+        } else if (seen.getOrDefault(location, Int.MAX_VALUE) >= cost) {
+            seen[location] = cost
+            neighbours(location)
+                .filter { it !in path }
+                .forEach { queue.add(path + it to cost + 1) }
+        }
+    }
+    return allPaths.map { GraphSearchResult(start, it.keys.first(), it) }
+}
+
+fun <K> findAlternativeRoutes(
+    comparison: GraphSearchResult<K>,
+    specialTreatment: Set<K>,
+    neighbours: (K, K) -> Iterable<K>
+): List<GraphSearchResult<K>> {
+    if (comparison.end == null) throw IllegalArgumentException("Can't find alternatives for unsuccessful route")
+    return specialTreatment.map { s ->
+        findShortestPathByPredicate(
+            comparison.start,
+            { p -> p == comparison.end },
+            { neighbours(it, s) }
+        )
+    }.filter { it.end != null && it.getScore() == comparison.getScore() }
 }
 
 data class SeenVertex<K>(val cost: Int, val prev: K?)

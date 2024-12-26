@@ -97,3 +97,8 @@ fun Long.split(): List<Long> {
 }
 
 fun List<String>.splitInput() = joinToString("\n").split("\n\n")
+
+fun <T> Collection<T>.allPairs(): List<Pair<T, T>> =
+    flatMap { left ->
+        map { right -> left to right }
+    }
