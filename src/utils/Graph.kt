@@ -147,7 +147,7 @@ fun <K> findAlternativeRoutes(
             { p -> p == comparison.end },
             { neighbours(it, s) }
         )
-    }.filter { it.end != null && it.getScore() == comparison.getScore() }
+    }.filter { it.end != null && it.getScore() <= comparison.getScore() }
 }
 
 data class SeenVertex<K>(val cost: Int, val prev: K?)
