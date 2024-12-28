@@ -102,3 +102,12 @@ fun <T> Collection<T>.allPairs(): List<Pair<T, T>> =
     flatMap { left ->
         map { right -> left to right }
     }
+
+fun <T> Collection<T>.allPairsUnidirectional(): List<Pair<T, T>> =
+    toList().let { list ->
+        list.flatMapIndexed { index, first ->
+            list.drop(index + 1).map { second ->
+                first to second
+            }
+        }
+    }
