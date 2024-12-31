@@ -103,6 +103,10 @@ fun <T> Collection<T>.allPairs(): List<Pair<T, T>> =
         map { right -> left to right }
     }
 
+fun <T> Pair<Collection<T>, Collection<T>>.allPairs(): List<Pair<T, T>> = first.flatMap { left ->
+    second.map { right -> left to right }
+}
+
 fun <T> Collection<T>.allPairsUnidirectional(): List<Pair<T, T>> =
     toList().let { list ->
         list.flatMapIndexed { index, first ->
@@ -111,3 +115,25 @@ fun <T> Collection<T>.allPairsUnidirectional(): List<Pair<T, T>> =
             }
         }
     }
+
+fun List<String>.rotate(clockwise: Boolean = true): List<String> {
+    val rowCount = size
+    val colCount = first().length
+    return if (clockwise) {
+        (0 until colCount).map { col ->
+            (rowCount - 1 downTo 0).joinToString("") { row ->
+                this[row][col].toString()
+            }
+        }
+    } else {
+        (0 until colCount).map { col ->
+            (0 until rowCount).joinToString("") { row ->
+                this[row][colCount - col - 1].toString()
+            }
+        }
+    }
+}
+
+fun <T, R> Pair<T,T>.callOnPair(func: (T) -> R): Pair<R,R> {
+    return func(first) to func(second)
+}
